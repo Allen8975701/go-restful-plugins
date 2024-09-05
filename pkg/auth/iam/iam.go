@@ -314,8 +314,8 @@ func WithPermission(permission *iam.Permission) FilterOption {
 		insufficientPermissionMessage := ErrorCodeMapping[InsufficientPermissions]
 		if DevStackTraceable {
 			action := ActionConverter(permission.Action)
-			insufficientPermissionMessage = fmt.Sprintf("%s. Required permission: %s [%s]", insufficientPermissionMessage,
-				permission.Resource, action)
+			insufficientPermissionMessage = fmt.Sprintf("%s. Required permission: %s [%s], token user id:[%s] , requiredUserId:[%s]", insufficientPermissionMessage,
+				permission.Resource, action, claims.Subject, req.PathParameter("userId"))
 		}
 		if !valid {
 			return respondErrorWithRequiredPermission(http.StatusForbidden, InsufficientPermissions,
