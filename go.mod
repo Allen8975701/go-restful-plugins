@@ -18,3 +18,5 @@ require (
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	gopkg.in/DataDog/dd-trace-go.v1 v1.28.0
 )
+
+replace github.com/AccelByte/iam-go-sdk/v2 v2.5.0 => github.com/Allen8975701/iam-go-sdk/v2 v2.0.0-20240906073218-784d0d98d88e
