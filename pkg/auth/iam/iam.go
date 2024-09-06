@@ -305,14 +305,15 @@ func WithPermission(permission *iam.Permission) FilterOption {
 		requiredPermissionResources["{namespace}"] = req.PathParameter("namespace")
 		requiredPermissionResources["{userId}"] = req.PathParameter("userId")
 
-		valid, err := iamClient.ValidatePermission(claims, *permission, requiredPermissionResources)
+		valid, permissions, err := iamClient.ValidatePermissionV2(claims, *permission, requiredPermissionResources)
 		if err != nil {
 			return respondError(http.StatusInternalServerError, InternalServerError,
 				"unable to validate permission: "+err.Error())
 		}
 		if !valid {
 			cliamstring, _ := json.Marshal(claims)
-			insufficientPermissionMessage := fmt.Sprintf("%s.token user id:[%s] , requiredUserId:[%s], claims details: [%s]", ErrorCodeMapping[InsufficientPermissions], claims.Subject, req.PathParameter("userId"), cliamstring)
+			permissionString, _ := json.Marshal(permissions)
+			insufficientPermissionMessage := fmt.Sprintf("%s.token user id:[%s] , requiredUserId:[%s], claims details: [%s], permission details: %s", ErrorCodeMapping[InsufficientPermissions], claims.Subject, req.PathParameter("userId"), cliamstring, permissionString)
 			return respondErrorWithRequiredPermission(http.StatusForbidden, InsufficientPermissions,
 				"access forbidden: "+insufficientPermissionMessage, Permission{
 					Resource: permission.Resource,
