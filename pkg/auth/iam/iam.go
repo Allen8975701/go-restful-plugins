@@ -310,9 +310,9 @@ func WithPermission(permission *iam.Permission) FilterOption {
 			return respondError(http.StatusInternalServerError, InternalServerError,
 				"unable to validate permission: "+err.Error())
 		}
-
-		insufficientPermissionMessage := fmt.Sprintf("%s.token user id:[%s] , requiredUserId:[%s]", ErrorCodeMapping[InsufficientPermissions], claims.Subject, req.PathParameter("userId"))
 		if !valid {
+			cliamstring, _ := json.Marshal(claims)
+			insufficientPermissionMessage := fmt.Sprintf("%s.token user id:[%s] , requiredUserId:[%s], claims details: [%s]", ErrorCodeMapping[InsufficientPermissions], claims.Subject, req.PathParameter("userId"), cliamstring)
 			return respondErrorWithRequiredPermission(http.StatusForbidden, InsufficientPermissions,
 				"access forbidden: "+insufficientPermissionMessage, Permission{
 					Resource: permission.Resource,
